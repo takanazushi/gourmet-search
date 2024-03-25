@@ -1,5 +1,6 @@
 package com.websarva.wings.android.gohandoko
 
+import android.location.LocationListener
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.websarva.wings.android.gohandoko.getLocationInfo.LocationInfomation
 import com.websarva.wings.android.gohandoko.ui.theme.GoHandokoTheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,3 +47,12 @@ fun GreetingPreview() {
         Greeting("Android")
     }
 }
+
+
+
+
+
+
+
+
+
