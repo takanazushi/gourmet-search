@@ -19,7 +19,7 @@ class CatchShopInfo(
         val keyWordParam = searchConditionsData.keyWordList.joinToString("&keyword=", "&keyword=")
 
         val urlString = buildString {
-            append("http://webservice.recruit.co.jp/hotpepper/gourmet/v1/?key=")
+            append("https://webservice.recruit.co.jp/hotpepper/gourmet/v1/?key=")
             append(BuildConfig.HOT_API_KEY)
             append(genereParam)
             append("&midnight_meal=")

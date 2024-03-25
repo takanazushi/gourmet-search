@@ -55,17 +55,17 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
     override fun shopInfoAsyncCallBack(searchResultsDataArray: ArrayList<SearchResultsData>) {
         for (gourmet in searchResultsDataArray) {
             Log.d(
-                "MainActivity",
+                "api",
                 "名前: ${gourmet.name}, 住所: ${gourmet.address},画像URL:${gourmet.thumbnail}"
             )
         }
     }
 
     override fun showProgress() {
-        isProgressShowing.value = false
+        isProgressShowing.value = true
     }
 
     override fun hideProgress() {
-        isProgressShowing.value = true
+        isProgressShowing.value = false
     }
 }

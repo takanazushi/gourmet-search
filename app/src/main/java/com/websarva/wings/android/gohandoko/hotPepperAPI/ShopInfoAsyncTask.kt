@@ -9,6 +9,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 
 class ShopInfoAsyncTask(private val listener: ConfirmAsyncListener) {
 
@@ -27,17 +28,17 @@ class ShopInfoAsyncTask(private val listener: ConfirmAsyncListener) {
     }
 
     private suspend fun doInBackGround(url: URL): String {
-        var con: HttpURLConnection? = null
+        var con: HttpsURLConnection? = null
 
         try {
-            con = url.openConnection() as HttpURLConnection
+            con = url.openConnection() as HttpsURLConnection
             con.requestMethod = "GET"
             con.connectTimeout = 3000
             con.readTimeout = 3000
             con.connect()
             val resCd = con.responseCode
 
-            if (resCd != HttpURLConnection.HTTP_OK) {
+            if (resCd != HttpsURLConnection.HTTP_OK) {
                 throw IndexOutOfBoundsException("HTTP responseCode:$resCd")
             }
 
@@ -78,16 +79,16 @@ class ShopInfoAsyncTask(private val listener: ConfirmAsyncListener) {
                     lunch = json.getString("lunch"),
                     midnight = json.getString("midnight"),
                     url = json.getString("urls"),
-                    access = json.getString("mobile_accsess"),
+                    access = json.getString("mobile_access"),
                     thumbnail = json.getJSONObject("photo").getJSONObject("mobile").getString("s"),
-                    photo = json.getJSONObject("photo").getJSONObject("mobile").getString("m"),
+                    photo = json.getJSONObject("photo").getJSONObject("mobile").getString("l"),
                     genre=json.getJSONObject("genre").getString("name"),
                     open = json.getString("open"),
                     close = json.getString("close")
                     )
-
                 searchResultsDataArray.add(searchResultsData)
             }
+
             listener.shopInfoAsyncCallBack(searchResultsDataArray)
         }catch (e:JSONException){
             e.printStackTrace()
