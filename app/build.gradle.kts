@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.websarva.wings.android.gohandoko"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.websarva.wings.android.gohandoko"
@@ -18,6 +18,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "HOT_API_KEY", "\"${project.properties["HOT_API_KEY"]}\"")
     }
 
     buildTypes {
@@ -38,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig=true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -66,4 +69,14 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation("androidx.compose.ui:ui:1.0.5")
+    // Tooling support (Previews, etc.)
+    implementation("androidx.compose.ui:ui-tooling:1.0.5")
+    // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
+    implementation("androidx.compose.foundation:foundation:1.0.5")
+    // Material Design
+    implementation("androidx.compose.material:material:1.0.5")
+    // Material design icons
+    implementation("androidx.compose.material:material-icons-core:1.0.5")
+    implementation("androidx.compose.material:material-icons-extended:1.0.5")
 }
