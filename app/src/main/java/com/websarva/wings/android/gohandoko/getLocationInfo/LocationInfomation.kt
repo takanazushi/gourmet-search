@@ -24,9 +24,9 @@ import androidx.core.content.ContextCompat
 import com.websarva.wings.android.gohandoko.ui.theme.GoHandokoTheme
 
 
-class LocationInfomation : ComponentActivity(), LocationListener {
+class LocationInfomation(private val activity: ComponentActivity,private  val locationListener: LocationListener) {
     /** LocationManagerを保持する変数 **/
-    private lateinit var locationManager: LocationManager
+    private val locationManager=activity.getSystemService(Context.LOCATION_SERVICE)as android.location.LocationManager
 
     /**
      * 位置情報の許可を求める
@@ -34,109 +34,44 @@ class LocationInfomation : ComponentActivity(), LocationListener {
      * 拒否：トーストメッセージの表示
      */
     private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 getLocation()
             } else {
-                val toast = Toast.makeText(this, "位置情報許可してくれないと検索できないよ！", Toast.LENGTH_LONG)
+                val toast = Toast.makeText(activity, "位置情報許可してくれないと検索できないよ！", Toast.LENGTH_LONG)
                 toast.show()
             }
         }
-
-    /**
-     * 位置情報アクセスの許可があるか確認
-     * 許可がない：requestPermissionLauncherの呼び出し
-     * 許可がある：getLoactionの呼び出し
-     */
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        } else {
-            getLocation()
-        }
-    }
 
 
     /**
      * 位置情報の取得
      */
-    private fun getLocation() {
-        Log.d("LocationInfoDebug", "getLocation()の処理が始まりました")
-
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        //GPSが有効かどうかの確認
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Log.d("LocationInfoDebug", "ロケーションマネージャーは有効です")
-        } else {
-            Log.d("LocationInfoDebug", "GPSが無効です")
-            //GPS設定画面を開くためのインテントを作成
-            val settingsIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-            //GPS設定画面を開く
-            startActivity(settingsIntent)
-        }
-
-        //位置情報に対してのアクセス許可があるかどうかの確認
+    fun getLocation() {
         if (ContextCompat.checkSelfPermission(
-                this,
+                activity,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                100
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+                updateLocation()
+        }
+
+    }
+
+    private fun updateLocation(){
+        if (ContextCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            locationManager.requestLocationUpdates(
+                android.location.LocationManager.GPS_PROVIDER,
+                1000,
+                50f,
+                locationListener
             )
-            Log.d("LocationInfoDebug", "checkSelfPermissionがfalseです")
-            return
         }
-
-        /**
-         * 位置情報の更新
-         * GPSを使って取得する
-         * 更新は1秒おき
-         * 50m移動すると更新
-         * 更新する毎にonLocationChanged()を呼び出し
-         */
-        locationManager.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
-            1000,
-            50f,
-            this
-        )
-    }
-
-    //位置情報を代入
-    override fun onLocationChanged(location: Location) {
-        Log.d("LocationInfoDebug", "経度：${location.longitude}")
-        Log.d("LocationInfoDebug", "緯度：${location.latitude}")
-        setContent{
-            locationScreen(location.longitude,location.latitude)
-        }
-    }
-
-}
-
-@Composable
-fun locationScreen(longitude: Double = 0.0,latitude: Double = 0.0)
-{
-    Column {
-        Text(text="位置情報取得結果")
-        Text(text="経度：$longitude")
-        Text(text ="緯度：$latitude")
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-     GoHandokoTheme{
-        locationScreen(0.0,0.0)
     }
 }

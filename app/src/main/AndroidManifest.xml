@@ -17,7 +17,7 @@
         android:theme="@style/Theme.GoHandoko"
         tools:targetApi="31">
         <activity
-            android:name=".getLocationInfo.LocationInfomation"
+            android:name=".getLocationInfo.LocationInfoActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.GoHandoko">
