@@ -114,21 +114,22 @@ class LocationInfomation : ComponentActivity(), LocationListener {
 
     //位置情報を代入
     override fun onLocationChanged(location: Location) {
-        Log.d("LocationInfoDebug", "緯度：${location.longitude}")
-        Log.d("LocationInfoDebug", "経度：${location.latitude}")
+        Log.d("LocationInfoDebug", "経度：${location.longitude}")
+        Log.d("LocationInfoDebug", "緯度：${location.latitude}")
         setContent{
-            locationScreen(location.longitude,location.longitude)
+            locationScreen(location.longitude,location.latitude)
         }
     }
 
 }
 
 @Composable
-fun locationScreen(latitude: Double = 0.0, longitude: Double = 0.0)
+fun locationScreen(longitude: Double = 0.0,latitude: Double = 0.0)
 {
     Column {
-        Text(text="緯度：$latitude")
-        Text(text ="経度：$longitude")
+        Text(text="位置情報取得結果")
+        Text(text="経度：$longitude")
+        Text(text ="緯度：$latitude")
     }
 }
 
