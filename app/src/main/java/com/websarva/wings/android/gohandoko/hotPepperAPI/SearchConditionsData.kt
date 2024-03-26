@@ -4,7 +4,7 @@ package com.websarva.wings.android.gohandoko.hotPepperAPI
  * @param lat 緯度
  * @param lng 経度
  * @param lunch ランチ営業有無
- * @param midnightMeal ２３時以降食事OK
+ * @param midnight ２３時以降も営業
  * @param range 検索範囲距離
  * @param keyWordList キーワードのリスト
  * @param genreCdList ジャンルのリスト
@@ -13,7 +13,7 @@ data class SearchConditionsData(
     var lat: Double?,
     var lng: Double?,
     var lunch: Int,
-    var midnightMeal: Int,
+    var midnight: Int,
     var range: Int,
     var keyWordList: ArrayList<String>,
     var genreCdList: ArrayList<String>

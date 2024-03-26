@@ -23,7 +23,7 @@ class CatchShopInfo(
             append(BuildConfig.HOT_API_KEY)
             append(genereParam)
             append("&midnight_meal=")
-            append(searchConditionsData.midnightMeal)
+            append(searchConditionsData.midnight)
             append(keyWordParam)
             append("&lunch=")
             append(searchConditionsData.lunch)

@@ -1,4 +1,4 @@
-package com.websarva.wings.android.gohandoko
+package com.websarva.wings.android.gohandoko.searchScreen
 
 import android.location.Location
 import android.location.LocationListener
@@ -6,8 +6,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.tooling.preview.Preview
 import com.websarva.wings.android.gohandoko.getLocationInfo.LocationInfomation
 import com.websarva.wings.android.gohandoko.hotPepperAPI.CatchShopInfo
 import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchConditionsData
@@ -18,7 +22,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener, LocationListener {
+class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener,
+    LocationListener {
 
     private val isProgressShowing = mutableStateOf(false)
 
@@ -37,6 +42,11 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
             GoHandokoTheme {
                 if (isProgressShowing.value) {
                     CircularProgressIndicator()
+                } else {
+                    //検索ボタン
+                    Button(onClick = { search() }) {
+                        Text(text = "検索")
+                    }
                 }
             }
         }
@@ -46,7 +56,7 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
 
     }
 
-    override fun onLocationChanged(location: Location) {
+    private fun search() {
         CoroutineScope(Dispatchers.Main).launch {
             val searchConditionsData = SearchConditionsData(
                 lat = locationInfomation.latitude ?: 0.0,
@@ -58,10 +68,14 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
                 keyWordList = mKeyWordList
             )
 
-            CatchShopInfo(this@MainActivity, this@MainActivity).callHotPepperAPI(
+            CatchShopInfo(this@SearchActivity, this@SearchActivity).callHotPepperAPI(
                 searchConditionsData
             )
         }
+    }
+
+    override fun onLocationChanged(location: Location) {
+
     }
 
     override fun shopInfoAsyncCallBack(searchResultsDataArray: ArrayList<SearchResultsData>) {
@@ -83,3 +97,5 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
         isProgressShowing.value = false
     }
 }
+
+
