@@ -30,7 +30,7 @@ class LocationInfoActivity : ComponentActivity(), LocationListener {
 }
 
 @Composable
-fun locationScreen(latitude: Double = 0.0, longitude: Double = 0.0) {
+fun locationScreen(longitude: Double = 0.0, latitude: Double = 0.0) {
     Column {
         Text(text = "経度：$longitude")
         Text(text = "緯度：$latitude")
