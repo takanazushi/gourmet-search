@@ -1,11 +1,14 @@
 package com.websarva.wings.android.gohandoko
 
+import android.location.Location
+import android.location.LocationListener
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.mutableStateOf
+import com.websarva.wings.android.gohandoko.getLocationInfo.LocationInfomation
 import com.websarva.wings.android.gohandoko.hotPepperAPI.CatchShopInfo
 import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchConditionsData
 import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchResultsData
@@ -15,15 +18,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener {
+class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener, LocationListener {
 
     private val isProgressShowing = mutableStateOf(false)
 
     val mGenereCdList = arrayListOf<String>()
     val mKeyWordList = arrayListOf<String>()
 
+    private lateinit var locationInfomation: LocationInfomation
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        locationInfomation = LocationInfomation(this, this)
+        locationInfomation.getLocation()
 
         setContent {
             GoHandokoTheme {
@@ -35,10 +43,14 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
 
         mGenereCdList.add("G001")
 
+
+    }
+
+    override fun onLocationChanged(location: Location) {
         CoroutineScope(Dispatchers.Main).launch {
             val searchConditionsData = SearchConditionsData(
-                lat = 34.663755,
-                lng = 135.518540,
+                lat = locationInfomation.latitude ?: 0.0,
+                lng = locationInfomation.longitude ?: 0.0,
                 lunch = 0,
                 range = 1,
                 genreCdList = mGenereCdList,
@@ -59,6 +71,8 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
                 "名前: ${gourmet.name}, 住所: ${gourmet.address},画像URL:${gourmet.thumbnail}"
             )
         }
+
+        Log.d("api","緯度：${locationInfomation.latitude},経度:${locationInfomation.longitude}")
     }
 
     override fun showProgress() {

@@ -4,6 +4,7 @@ package com.websarva.wings.android.gohandoko.getLocationInfo
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationListener
 import android.os.Handler
 import android.os.Looper
@@ -22,8 +23,11 @@ class LocationInfomation(
     private val locationManager =
         activity.getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
 
-    /** GPSで位置情報を取得できたかどうかフラグ **/
-    private var failedGps = false
+    /** 緯度 **/
+    var latitude: Double? = null
+
+    /** 経度 **/
+    var longitude: Double? = null
 
     /**
      * 位置情報の許可を求める
@@ -74,7 +78,13 @@ class LocationInfomation(
                 android.location.LocationManager.GPS_PROVIDER,
                 1000,
                 50f,
-                locationListener
+                object :LocationListener{
+                    override fun onLocationChanged(location: Location) {
+                        latitude=location.latitude
+                        longitude=location.longitude
+                        locationListener.onLocationChanged(location)
+                    }
+                }
             )
 
             /** GPSで位置情報が取得できなかった場合 **/
@@ -88,7 +98,13 @@ class LocationInfomation(
                         android.location.LocationManager.NETWORK_PROVIDER,
                         1000,
                         50f,
-                        locationListener
+                        object :LocationListener{
+                            override fun onLocationChanged(location: Location) {
+                                latitude=location.latitude
+                                longitude=location.longitude
+                                locationListener.onLocationChanged(location)
+                            }
+                        }
                     )
 
                 }, 10000)

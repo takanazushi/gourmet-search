@@ -47,6 +47,7 @@ class CatchShopInfo(
                 val result = shopInfoAsyncTask.execute(url)
             } catch (e: Exception) {
                 e.printStackTrace()
+                Log.d("CatchShopInfo", e.toString())
                 withContext(Dispatchers.Main) {
                     listener.hideProgress()
                     Toast.makeText(
