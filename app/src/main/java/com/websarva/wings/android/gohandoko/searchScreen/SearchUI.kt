@@ -63,6 +63,10 @@ fun SearchScreen(
     onKeyWordChange: (String) -> Unit
 ) {
 
+    val (isIzakayaChacked, setIsIzakayaChaked) = remember {
+        mutableStateOf(false)
+    }
+
     Column(
         modifier = Modifier
             //Columnの幅を最大に
@@ -131,112 +135,16 @@ fun SearchScreen(
 
         Text(text = "お店のジャンル", modifier = Modifier.align(Alignment.Start))
 
-        Column {
-
-            Row {
-                //チェックボックスを表示する
-                CheckBoxAndTitleText(TitleName = "居酒屋",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G001") })
-                Spacer(modifier = Modifier.width(30.dp))
-                CheckBoxAndTitleText(TitleName = "ダイニングバー・バル",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G002") })
-            }
-
-            Row {
-                CheckBoxAndTitleText(TitleName = "創作料理",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G003") })
-                Spacer(modifier = Modifier.width(13.dp))
-                CheckBoxAndTitleText(TitleName = "和食",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G004") })
-                Spacer(modifier = Modifier.width(31.dp))
-                CheckBoxAndTitleText(TitleName = "洋食",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G005") })
-            }
-
-            Row {
-                CheckBoxAndTitleText(TitleName = "イタリアン・フレンチ",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G006") })
-                Spacer(modifier = Modifier.width(28.dp))
-                CheckBoxAndTitleText(TitleName = "中華",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G007") })
-            }
-
-            Row {
-                CheckBoxAndTitleText(TitleName = "焼肉・ホルモン",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G008") })
-                Spacer(modifier = Modifier.width(76.dp))
-                CheckBoxAndTitleText(TitleName = "韓国料理",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G017") })
-            }
-
-            Row {
-                CheckBoxAndTitleText(TitleName = "アジア・エスニック料理",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G009") })
-                Spacer(modifier = Modifier.width(10.dp))
-                CheckBoxAndTitleText(TitleName = "各国料理",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G010") })
-            }
-
-            Row {
-                CheckBoxAndTitleText(TitleName = "カラオケ・パーティ",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G011") })
-                Spacer(modifier = Modifier.width(44.dp))
-                CheckBoxAndTitleText(TitleName = "バー\nカクテル",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G012") })
-            }
-
-            Row {
-                CheckBoxAndTitleText(TitleName = "ラーメン",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G013") })
-                Spacer(modifier = Modifier.width(30.dp))
-                CheckBoxAndTitleText(TitleName = "お好み焼き・もんじゃ",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G016") })
-            }
-
-            Row {
-                CheckBoxAndTitleText(TitleName = "カフェ・スイーツ",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G014") })
-                Spacer(modifier = Modifier.width(30.dp))
-                CheckBoxAndTitleText(TitleName = "その他グルメ",
-                    checked = false,
-                    onCheckedChange = { onGenreChackChange("G015") })
-            }
-        }
+        GenreCheckbox(onGenreChackChange = onGenreChackChange)
 
         Divider()
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row {
-            //ランチ有無チェックボックス
-            CheckBoxAndTitleText(
-                TitleName = "ランチあり", checked = false, onCheckedChange = onLunchCheckedChange
-            )
-            Spacer(modifier = Modifier.width(60.dp))
-
-            //23時以降も営業してるところがいいかどうかのチェックボックス
-            CheckBoxAndTitleText(
-                TitleName = "23時以降も営業",
-                checked = false,
-                onCheckedChange = onMidnightCheckedChange
-            )
-        }
+        LunchAndMidnightCheckBox(
+            onLunchCheckedChange = onLunchCheckedChange,
+            onMidnightCheckedChange = onMidnightCheckedChange
+        )
 
         Divider()
 
@@ -276,6 +184,257 @@ fun CheckBoxAndTitleText(
 
         //テキストを表示する
         Text(text = TitleName)
+    }
+}
+
+@Composable
+fun GenreCheckbox(onGenreChackChange: (String) -> Unit) {
+
+    val (isIZakayaChecked, setIzakayaChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isDiningChecked, setDiningChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isCreativeCuisineChecked, setCreativeCuisineChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isJapaneseFoodChecked, setJapaneseFoodChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isWesternFoodChecked, setWesternFoodChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isItalianChecked, setItalianChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isChineseFoodChecked, setChineseFoodChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isGrilledMeatChecked, setGrilledMeatChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isKoreanCuisineChecked, setKoreanCuisineChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isAsianFoodChecked, setAsianFoodChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isInternationalCuisineChecked, setInternationalCuisineChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isKaraokeChecked, setKaraokeChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isBarChecked, setBarChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isRamenChecked, setRamenChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isOkonomiyakiChecked, setOkonomiyakiChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isCafeChecked, setCafeChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isOthersChecked, setOthersChecked) = remember {
+        mutableStateOf(false)
+    }
+
+    Column {
+
+        Row {
+            //チェックボックスを表示する
+            CheckBoxAndTitleText(
+                TitleName = "居酒屋",
+                checked = isIZakayaChecked,
+                onCheckedChange = {
+                    setIzakayaChecked(!isIZakayaChecked)
+                    onGenreChackChange(if (isIZakayaChecked == true) "G001" else "")
+                }
+            )
+            Spacer(modifier = Modifier.width(30.dp))
+            CheckBoxAndTitleText(
+                TitleName = "ダイニングバー・バル",
+                checked = isDiningChecked,
+                onCheckedChange = {
+                    setDiningChecked(!isDiningChecked)
+                    onGenreChackChange(if (isDiningChecked == true) "G002" else "")
+                }
+            )
+        }
+
+        Row {
+            CheckBoxAndTitleText(TitleName = "創作料理",
+                checked = isCreativeCuisineChecked,
+                onCheckedChange = {
+                    setCreativeCuisineChecked(!isCreativeCuisineChecked)
+                    onGenreChackChange(if (isCreativeCuisineChecked == true) "G003" else "")
+                }
+            )
+            Spacer(modifier = Modifier.width(13.dp))
+            CheckBoxAndTitleText(TitleName = "和食",
+                checked = isJapaneseFoodChecked,
+                onCheckedChange = {
+                    setJapaneseFoodChecked(!isJapaneseFoodChecked)
+                    onGenreChackChange(if (isJapaneseFoodChecked == true) "G004" else "")
+                }
+            )
+            Spacer(modifier = Modifier.width(31.dp))
+            CheckBoxAndTitleText(TitleName = "洋食",
+                checked = isWesternFoodChecked,
+                onCheckedChange = {
+                    setWesternFoodChecked(!isWesternFoodChecked)
+                    onGenreChackChange(if (isWesternFoodChecked == true) "G005" else "")
+                }
+            )
+        }
+
+        Row {
+            CheckBoxAndTitleText(TitleName = "イタリアン・フレンチ",
+                checked = isItalianChecked,
+                onCheckedChange = {
+                    setItalianChecked(!isItalianChecked)
+                    onGenreChackChange(if (isItalianChecked == true) "G006" else "")
+                }
+            )
+            Spacer(modifier = Modifier.width(28.dp))
+            CheckBoxAndTitleText(TitleName = "中華",
+                checked = isChineseFoodChecked,
+                onCheckedChange = {
+                    setChineseFoodChecked(!isChineseFoodChecked)
+                    onGenreChackChange(if (isChineseFoodChecked == true) "G007" else "")
+                }
+            )
+        }
+
+        Row {
+            CheckBoxAndTitleText(TitleName = "焼肉・ホルモン",
+                checked = isGrilledMeatChecked,
+                onCheckedChange = {
+                    setGrilledMeatChecked(!isGrilledMeatChecked)
+                    onGenreChackChange(if (isGrilledMeatChecked == true) "G008" else "")
+                }
+            )
+            Spacer(modifier = Modifier.width(76.dp))
+            CheckBoxAndTitleText(TitleName = "韓国料理",
+                checked = isKaraokeChecked,
+                onCheckedChange = {
+                    setKaraokeChecked(!isKoreanCuisineChecked)
+                    onGenreChackChange(if (isKoreanCuisineChecked == true) "G017" else "")
+                }
+            )
+        }
+
+        Row {
+            CheckBoxAndTitleText(TitleName = "アジア・エスニック料理",
+                checked = isAsianFoodChecked,
+                onCheckedChange = {
+                    setAsianFoodChecked(!isAsianFoodChecked)
+                    onGenreChackChange(if (isAsianFoodChecked == true) "G009" else "")
+                }
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            CheckBoxAndTitleText(TitleName = "各国料理",
+                checked = isInternationalCuisineChecked,
+                onCheckedChange = {
+                    setInternationalCuisineChecked(!isInternationalCuisineChecked)
+                    onGenreChackChange(if (isInternationalCuisineChecked == true) "G010" else "")
+                }
+            )
+        }
+
+        Row {
+            CheckBoxAndTitleText(TitleName = "カラオケ・パーティ",
+                checked = isKaraokeChecked,
+                onCheckedChange = {
+                    setKaraokeChecked(!isKaraokeChecked)
+                    onGenreChackChange(if (isKaraokeChecked == true) "G011" else "")
+                }
+            )
+            Spacer(modifier = Modifier.width(44.dp))
+            CheckBoxAndTitleText(TitleName = "バー\nカクテル",
+                checked = isBarChecked,
+                onCheckedChange = {
+                    setBarChecked(!isBarChecked)
+                    onGenreChackChange(if (isBarChecked == true) "G012" else "")
+                }
+            )
+        }
+
+        Row {
+            CheckBoxAndTitleText(TitleName = "ラーメン",
+                checked = isRamenChecked,
+                onCheckedChange = {
+                    setRamenChecked(!isRamenChecked)
+                    onGenreChackChange(if (isRamenChecked == true) "G013" else "")
+                }
+            )
+            Spacer(modifier = Modifier.width(30.dp))
+            CheckBoxAndTitleText(TitleName = "お好み焼き・もんじゃ",
+                checked = isOkonomiyakiChecked,
+                onCheckedChange = {
+                    setOkonomiyakiChecked(!isOkonomiyakiChecked)
+                    onGenreChackChange(if (isOkonomiyakiChecked == true) "G016" else "")
+                }
+            )
+        }
+
+        Row {
+            CheckBoxAndTitleText(TitleName = "カフェ・スイーツ",
+                checked = isCafeChecked,
+                onCheckedChange = {
+                    setCafeChecked(!isCafeChecked)
+                    onGenreChackChange(if (isCafeChecked == true) "G014" else "")
+                }
+            )
+            Spacer(modifier = Modifier.width(30.dp))
+            CheckBoxAndTitleText(TitleName = "その他グルメ",
+                checked = isOthersChecked,
+                onCheckedChange = {
+                    setOthersChecked(!isOthersChecked)
+                    onGenreChackChange(if (isOthersChecked == true) "G015" else "")
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun LunchAndMidnightCheckBox(
+    onLunchCheckedChange: (Boolean) -> Unit,
+    onMidnightCheckedChange: (Boolean) -> Unit
+) {
+    val (isLaunchChecked, setLaunchChecked) = remember {
+        mutableStateOf(false)
+    }
+    val (isMidnightChecked, setMidnightChecked) = remember {
+        mutableStateOf(false)
+    }
+
+
+    Row {
+        //ランチ有無チェックボックス
+        CheckBoxAndTitleText(
+            TitleName = "ランチあり",
+            checked = isLaunchChecked,
+            onCheckedChange = {
+                setLaunchChecked(!isLaunchChecked)
+                onLunchCheckedChange(isLaunchChecked)
+            }
+        )
+        Spacer(modifier = Modifier.width(60.dp))
+
+        //23時以降も営業してるところがいいかどうかのチェックボックス
+        CheckBoxAndTitleText(
+            TitleName = "23時以降も営業",
+            checked = isMidnightChecked,
+            onCheckedChange = {
+                setMidnightChecked(!isMidnightChecked)
+                onMidnightCheckedChange(isMidnightChecked)
+            }
+        )
     }
 }
 

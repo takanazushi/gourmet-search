@@ -6,12 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.websarva.wings.android.gohandoko.getLocationInfo.LocationInfomation
 import com.websarva.wings.android.gohandoko.hotPepperAPI.CatchShopInfo
 import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchConditionsData
@@ -26,6 +23,7 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
     LocationListener {
 
     private val isProgressShowing = mutableStateOf(false)
+    private val serchData = SearchData()
 
     val mGenereCdList = arrayListOf<String>()
     val mKeyWordList = arrayListOf<String>()
@@ -43,15 +41,27 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
                 if (isProgressShowing.value) {
                     CircularProgressIndicator()
                 } else {
-                    //検索ボタン
-                    Button(onClick = { search() }) {
-                        Text(text = "検索")
-                    }
+                    SearchScreen(
+                        onSearchClick = ::search,
+                        onLunchCheckedChange = { serchData.lunchService = it },
+                        onMidnightCheckedChange = { serchData.openAfterMidnight = it },
+                        onGenreChackChange = { code ->
+                            serchData.genreWords = ArrayList(serchData.genreWords.apply {
+                                if (contains(code)) {
+                                    remove(code)
+                                } else {
+                                    add(code)
+                                }
+                            })
+                        },
+                        onRangeChange = { serchData.range = it },
+                        onKeyWordChange = { serchData.keyWord = it.replace("　"," ") }
+                    )
                 }
             }
         }
 
-        mGenereCdList.add("G001")
+        //mGenereCdList.add("G001")
 
 
     }
@@ -61,11 +71,11 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
             val searchConditionsData = SearchConditionsData(
                 lat = locationInfomation.latitude ?: 0.0,
                 lng = locationInfomation.longitude ?: 0.0,
-                lunch = 0,
-                range = 1,
-                genreCdList = mGenereCdList,
-                midnight = 0,
-                keyWordList = mKeyWordList
+                lunch = if (serchData.lunchService) 1 else 0,
+                range = serchData.range,
+                genreCdList = serchData.genreWords,
+                midnight = if(serchData.openAfterMidnight)1 else 0,
+                keyWordList = if(serchData.keyWord.isNotEmpty())  serchData.keyWord else ""
             )
 
             CatchShopInfo(this@SearchActivity, this@SearchActivity).callHotPepperAPI(

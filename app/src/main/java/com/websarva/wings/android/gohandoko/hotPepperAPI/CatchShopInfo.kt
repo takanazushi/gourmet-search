@@ -16,7 +16,7 @@ class CatchShopInfo(
 ) {
     suspend fun callHotPepperAPI(searchConditionsData: SearchConditionsData) {
         val genereParam = searchConditionsData.genreCdList.joinToString("&genre=", "&genre=")
-        val keyWordParam = searchConditionsData.keyWordList.joinToString("&keyword=", "&keyword=")
+        val keyWordParam = searchConditionsData.keyWordList
 
         val urlString = buildString {
             append("https://webservice.recruit.co.jp/hotpepper/gourmet/v1/?key=")

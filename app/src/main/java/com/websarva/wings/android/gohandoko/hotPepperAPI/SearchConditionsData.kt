@@ -15,6 +15,6 @@ data class SearchConditionsData(
     var lunch: Int,
     var midnight: Int,
     var range: Int,
-    var keyWordList: ArrayList<String>,
+    var keyWordList: String,
     var genreCdList: ArrayList<String>
 )
