@@ -24,10 +24,6 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
 
     private val isProgressShowing = mutableStateOf(false)
     private val serchData = SearchData()
-
-    val mGenereCdList = arrayListOf<String>()
-    val mKeyWordList = arrayListOf<String>()
-
     private lateinit var locationInfomation: LocationInfomation
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,29 +41,17 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
                         onSearchClick = ::search,
                         onLunchCheckedChange = { serchData.lunchService = it },
                         onMidnightCheckedChange = { serchData.openAfterMidnight = it },
-                        onGenreChackChange = { code ->
-                            serchData.genreWords = ArrayList(serchData.genreWords.apply {
-                                if (contains(code)) {
-                                    remove(code)
-                                } else {
-                                    add(code)
-                                }
-                            })
-                        },
+                        searchData = serchData,
                         onRangeChange = { serchData.range = it },
-                        onKeyWordChange = { serchData.keyWord = it.replace("　"," ") }
+                        onKeyWordChange = { serchData.keyWord = it.replace("　", " ") }
                     )
                 }
             }
         }
-
-        //mGenereCdList.add("G001")
-
-
     }
 
     private fun search() {
-        Log.d("MainActivity","検索はじまり")
+        Log.d("MainActivity", "検索はじまり")
         CoroutineScope(Dispatchers.Main).launch {
             val searchConditionsData = SearchConditionsData(
                 lat = locationInfomation.latitude ?: 0.0,
@@ -75,16 +59,22 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
                 lunch = if (serchData.lunchService) 1 else 0,
                 range = serchData.range,
                 genreCdList = serchData.genreWords,
-                midnight = if(serchData.openAfterMidnight)1 else 0,
-                keyWordList = if(serchData.keyWord.isNotEmpty())  serchData.keyWord else ""
+                midnight = if (serchData.openAfterMidnight) 1 else 0,
+                keyWordList = if (serchData.keyWord.isNotEmpty()) serchData.keyWord else ""
             )
+
+            Log.d("MainActivity", "launchサービス：${serchData.lunchService}")
+            Log.d("MainActivity", "深夜営業：${serchData.openAfterMidnight}")
+            Log.d("MainActivity", "genre：${serchData.genreWords}")
+            Log.d("MainActivity", "範囲：${serchData.range}")
+            Log.d("MainActivity", "キーワード：" + serchData.keyWord)
 
             CatchShopInfo(this@MainActivity, this@MainActivity).callHotPepperAPI(
                 searchConditionsData
             )
         }
 
-        Log.d("MainActivity","検索終わり")
+        Log.d("MainActivity", "検索終わり")
 
     }
 
@@ -93,14 +83,16 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
     }
 
     override fun shopInfoAsyncCallBack(searchResultsDataArray: ArrayList<SearchResultsData>) {
+
         for (gourmet in searchResultsDataArray) {
             Log.d(
                 "api",
-                "名前: ${gourmet.name}, 住所: ${gourmet.address},URL:${gourmet.url}"
+                "名前: ${gourmet.name}, 住所: ${gourmet.address},URL:${gourmet.url},ジャンル${gourmet.genre}"
             )
         }
 
         Log.d("api", "緯度：${locationInfomation.latitude},経度:${locationInfomation.longitude}")
+
     }
 
     override fun showProgress() {

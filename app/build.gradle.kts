@@ -40,7 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig=true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -80,7 +80,9 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core:1.0.5")
     implementation("androidx.compose.material:material-icons-extended:1.0.5")
 
-    implementation ("androidx.activity:activity-ktx:1.2.0")
+    implementation("androidx.activity:activity-ktx:1.2.0")
 
+    implementation ("androidx.compose.runtime:runtime-livedata:1.6.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
     implementation("androidx.compose.material3:material3:1.0.0-alpha01")
 }

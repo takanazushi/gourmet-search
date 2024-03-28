@@ -24,6 +24,7 @@ class CatchShopInfo(
             append(genereParam)
             append("&midnight_meal=")
             append(searchConditionsData.midnight)
+            append("&keyword=")
             append(keyWordParam)
             append("&lunch=")
             append(searchConditionsData.lunch)
