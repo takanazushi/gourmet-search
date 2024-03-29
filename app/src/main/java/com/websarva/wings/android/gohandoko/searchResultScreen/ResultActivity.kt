@@ -1,6 +1,7 @@
 package com.websarva.wings.android.gohandoko.searchResultScreen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,8 +31,11 @@ import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchResultsData
 @Composable
 fun ResultActivity(
     navController: NavController,
-    searchResultDataArray: ArrayList<SearchResultsData>
+    searchResultDataArray: ArrayList<SearchResultsData>,
+    selectedData: MutableState<SearchResultsData?>
 ) {
+
+
 
     Column {
         Button(onClick = { navController.popBackStack() }) {
@@ -43,7 +50,11 @@ fun ResultActivity(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .clickable {
+                            selectedData.value=data
+                            navController.navigate("detail_screen")
+                        },
                     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                 ) {
                     Row(

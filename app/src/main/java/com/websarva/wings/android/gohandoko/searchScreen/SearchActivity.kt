@@ -12,6 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.websarva.wings.android.gohandoko.detailsScreen.DetealsScreen
 import com.websarva.wings.android.gohandoko.getLocationInfo.LocationInfomation
 import com.websarva.wings.android.gohandoko.hotPepperAPI.CatchShopInfo
 import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchConditionsData
@@ -39,6 +40,8 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
     private lateinit var locationInfomation: LocationInfomation
 
     private var searchResultsDataArray: ArrayList<SearchResultsData> = ArrayList()
+
+    val selectedData = mutableStateOf<SearchResultsData?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +77,16 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
 
                     //検索結果のルートを設定
                     composable("result_screen") {
-                        ResultActivity(navHostController,searchResultsDataArray)
+                        ResultActivity(navHostController, searchResultsDataArray, selectedData)
+                    }
+
+                    composable("detail_screen") {
+                        if (selectedData.value != null) {
+                            DetealsScreen(
+                                navController = navHostController,
+                                data = selectedData.value!!
+                            )
+                        }
                     }
                 }
 
@@ -122,7 +134,7 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
     /**結果を受け取った時の処理**/
     override fun shopInfoAsyncCallBack(searchResultsDataArrayList: ArrayList<SearchResultsData>) {
 
-        searchResultsDataArray=searchResultsDataArrayList
+        searchResultsDataArray = searchResultsDataArrayList
 
         for (gourmet in searchResultsDataArrayList) {
             Log.d(
