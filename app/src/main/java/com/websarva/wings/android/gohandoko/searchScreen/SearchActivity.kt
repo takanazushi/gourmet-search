@@ -38,12 +38,16 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
     //位置情報を取得するためのオブジェクト
     private lateinit var locationInfomation: LocationInfomation
 
+    private var searchResultsDataArray: ArrayList<SearchResultsData> = ArrayList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //位置情報の取得を開始
         locationInfomation = LocationInfomation(this, this)
         locationInfomation.getLocation()
+
+
 
         setContent {
             GoHandokoTheme {
@@ -70,7 +74,7 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
 
                     //検索結果のルートを設定
                     composable("result_screen") {
-                        ResultActivity(navHostController)
+                        ResultActivity(navHostController,searchResultsDataArray)
                     }
                 }
 
@@ -116,9 +120,11 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
     }
 
     /**結果を受け取った時の処理**/
-    override fun shopInfoAsyncCallBack(searchResultsDataArray: ArrayList<SearchResultsData>) {
+    override fun shopInfoAsyncCallBack(searchResultsDataArrayList: ArrayList<SearchResultsData>) {
 
-        for (gourmet in searchResultsDataArray) {
+        searchResultsDataArray=searchResultsDataArrayList
+
+        for (gourmet in searchResultsDataArrayList) {
             Log.d(
                 "api",
                 "名前: ${gourmet.name}, 住所: ${gourmet.address},URL:${gourmet.url},ジャンル${gourmet.genre}"
