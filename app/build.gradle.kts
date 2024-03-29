@@ -85,4 +85,5 @@ dependencies {
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
     implementation("androidx.compose.material3:material3:1.0.0-alpha01")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 }

@@ -8,11 +8,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.mutableStateOf
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.websarva.wings.android.gohandoko.getLocationInfo.LocationInfomation
 import com.websarva.wings.android.gohandoko.hotPepperAPI.CatchShopInfo
 import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchConditionsData
 import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchResultsData
 import com.websarva.wings.android.gohandoko.hotPepperAPI.ShopInfoAsyncTask
+import com.websarva.wings.android.gohandoko.searchResultScreen.ResultActivity
 import com.websarva.wings.android.gohandoko.ui.theme.GoHandokoTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,34 +26,60 @@ import kotlinx.coroutines.launch
 class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener,
     LocationListener {
 
+    //画面遷移を管理するNavHostController
+    private lateinit var navHostController: NavHostController
+
+    //Progressbarの状態管理
     private val isProgressShowing = mutableStateOf(false)
+
+    //ユーザー入力値を保持するオブジェクト
     private val serchData = SearchData()
+
+    //位置情報を取得するためのオブジェクト
     private lateinit var locationInfomation: LocationInfomation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //位置情報の取得を開始
         locationInfomation = LocationInfomation(this, this)
         locationInfomation.getLocation()
 
         setContent {
             GoHandokoTheme {
-                if (isProgressShowing.value) {
-                    CircularProgressIndicator()
-                } else {
-                    SearchScreen(
-                        onSearchClick = ::search,
-                        onLunchCheckedChange = { serchData.lunchService = it },
-                        onMidnightCheckedChange = { serchData.openAfterMidnight = it },
-                        searchData = serchData,
-                        onRangeChange = { serchData.range = it },
-                        onKeyWordChange = { serchData.keyWord = it.replace("　", " ") }
-                    )
+
+                //NavControllerのインスタンス作成
+                navHostController = rememberNavController()
+
+                //NavHostを設定
+                NavHost(navController = navHostController, startDestination = "search_screen") {
+                    composable("search_screen") {
+                        if (isProgressShowing.value) {
+                            CircularProgressIndicator()
+                        } else {
+                            SearchScreen(
+                                onSearchClick = ::search,
+                                onLunchCheckedChange = { serchData.lunchService = it },
+                                onMidnightCheckedChange = { serchData.openAfterMidnight = it },
+                                searchData = serchData,
+                                onRangeChange = { serchData.range = it },
+                                onKeyWordChange = { serchData.keyWord = it.replace("　", " ") }
+                            )
+                        }
+                    }
+
+                    //検索結果のルートを設定
+                    composable("result_screen") {
+                        ResultActivity(navHostController)
+                    }
                 }
+
+
             }
         }
     }
 
+    /**検索処理**/
     private fun search() {
         Log.d("MainActivity", "検索はじまり")
         CoroutineScope(Dispatchers.Main).launch {
@@ -68,10 +99,13 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
             Log.d("MainActivity", "範囲：${serchData.range}")
             Log.d("MainActivity", "キーワード：" + serchData.keyWord)
 
+            //検索実行
             CatchShopInfo(this@SearchActivity, this@SearchActivity).callHotPepperAPI(
                 searchConditionsData
             )
         }
+
+
 
         Log.d("MainActivity", "検索終わり")
 
@@ -81,6 +115,7 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
 
     }
 
+    /**結果を受け取った時の処理**/
     override fun shopInfoAsyncCallBack(searchResultsDataArray: ArrayList<SearchResultsData>) {
 
         for (gourmet in searchResultsDataArray) {
@@ -92,12 +127,16 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
 
         Log.d("api", "緯度：${locationInfomation.latitude},経度:${locationInfomation.longitude}")
 
+        //結果画面に遷移
+        navHostController.navigate("result_screen")
     }
 
+    //Progressbar表示
     override fun showProgress() {
         isProgressShowing.value = true
     }
 
+    //Progressbar非表示
     override fun hideProgress() {
         isProgressShowing.value = false
     }
