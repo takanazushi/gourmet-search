@@ -81,7 +81,7 @@ class ShopInfoAsyncTask(private val listener: ConfirmAsyncListener) {
                     url = json.getString("urls"),
                     access = json.getString("mobile_access"),
                     thumbnail = json.getJSONObject("photo").getJSONObject("mobile").getString("s"),
-                    photo = json.getJSONObject("photo").getJSONObject("mobile").getString("l"),
+                    photo = json.getJSONObject("photo").getJSONObject("pc").getString("l"),
                     genre=json.getJSONObject("genre").getString("name"),
                     open = json.getString("open"),
                     close = json.getString("close")
