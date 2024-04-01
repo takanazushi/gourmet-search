@@ -3,11 +3,12 @@ package com.websarva.wings.android.gohandoko.detailsScreen
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -23,6 +24,36 @@ import coil.compose.rememberImagePainter
 import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchResultsData
 import com.websarva.wings.android.gohandoko.ui.theme.GoHandokoTheme
 
+/**
+ * 営業時間を分かりやすく改行するMethod
+ *
+ * @open open APIから受け取った営業時間
+ * @return return 編集した営業時間
+ */
+fun formatOpenHours(open: String): String {
+
+    //非数字（\\D）の後に、コロンと半角スペースがあり、そのあとに数字（\\d）が続くパターン
+    //全角スペースに置き換える
+    val changeColon = open.replace(Regex("(?<=\\D): (?=\\d)"), "　")
+
+    //数字（\\d）の後に半角スペースと（があり、そのあとに非数字（\\D）が続くパターン
+    //改行記号と半角の(に置き換える
+    val changeOpen = changeColon.replace(Regex("(?<=\\d) （(?=\\D)"), "\n(")
+
+    //数字（\\d）の後に）と半角スペースがあり、そのあとに非数字（\\D）が続くパターン
+    //）と改行記号に置き換える
+    val addNewLine = changeOpen.replace(Regex("(?<=\\d)）(?=\\D)"), ")\n")
+
+    //全角の）を半角の)に置き換える
+    val changeClose = addNewLine.replace(Regex("）"), ")")
+
+    //文字の文末が数字で終わっている場合、数字に改行を加える
+    val changeEndingNumber = changeClose.replace(Regex("(\\d+)$"), "$1\n")
+
+    //全角のSpaceと、半角の)の後ろに改行記号を加える
+    return changeEndingNumber.replace(Regex("[　)]"), "$0\n")
+}
+
 @Composable
 fun DetealsScreen(navController: NavController, data: SearchResultsData) {
 
@@ -33,59 +64,133 @@ fun DetealsScreen(navController: NavController, data: SearchResultsData) {
                 Text(text = "戻る")
             }
 
-            Column {
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp)
+            ) {
                 Image(
                     painter = rememberImagePainter(data = data.photo),
                     contentDescription = null,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .height(300.dp)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Divider()
                 Spacer(modifier = Modifier.height(8.dp))
-                Row {
-                    Text(text = "店名：", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "${data.name}")
-                }
 
-                Row {
-                    Text(text = "住所：", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "${data.address}")
-                }
+                Text(text = data.genre, modifier = Modifier.padding(start = 20.dp))
 
-                Row {
-                    Text(text = "アクセス：", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "${data.access}")
-                }
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Row {
-                    Text(text = "営業時間：", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "${data.open}")
-                }
+                Text(
+                    text = data.name,
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 20.dp),
+                    lineHeight = 30.sp
+                )
 
-                Row {
-                    Text(text = "定休日：", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "${data.close}")
-                }
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Row {
-                    Text(text = "ランチ：", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "${data.lunch}")
-                }
+                Text(text = data.access, modifier = Modifier.padding(start = 20.dp))
 
-                Row {
-                    Text(text = "23時以降の営業：", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "${data.midnight}")
-                }
+                Spacer(modifier = Modifier.height(8.dp))
 
+                Divider()
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "住所",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = data.address,
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "営業時間",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = formatOpenHours(data.open),
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+
+                Text(
+                    text = "定休日",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = data.close,
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "ランチ営業有無",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = data.lunch,
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "23時以降の営業有無",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = data.midnight,
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
             }
         }
 
 
     }
 
-    Log.d("Deteal", "launchサービス：${data.access}")
+    Log.d("Deteal", "launchサービス：${data.name}")
 }
 
 @Preview
@@ -93,7 +198,7 @@ fun DetealsScreen(navController: NavController, data: SearchResultsData) {
 fun Preview() {
     val dummyData = SearchResultsData(
         id = "1",
-        name = "テストのお店",
+        name = "カフェカラオケなんでもありますうきうきなお店★",
         address = "テスト県テスト市テストテストテスト111-1",
         lat = 134.55555,
         lng = 34.555555,
@@ -102,9 +207,9 @@ fun Preview() {
         url = "hogehogehogehoge",
         access = "テスト駅から徒歩100分",
         thumbnail = "dami-dami-dami-dami",
-        photo = "dami-dami-dami-dami-",
+        photo = "https://imgfp.hotp.jp/IMGH/97/41/P037659741/P037659741_238.jpg",
         genre = "居酒屋",
-        open = "月・水・金",
+        open = "月～水、金、祝前日: 11:30～14:30 （料理L.O. 14:00 ドリンクL.O. 14:00）17:30～23:00 （料理L.O. 22:00 ドリンクL.O. 22:00）土: 11:30～14:30 （料理L.O. 14:00 ドリンクL.O. 14:00）17:00～23:00 （料理L.O. 22:00 ドリンクL.O. 22:00）",
         close = "火・木"
     )
 
