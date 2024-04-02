@@ -1,10 +1,12 @@
 package com.websarva.wings.android.gohandoko.detailsScreen
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -62,6 +64,34 @@ fun formatURL(jsonURLString: String): String {
     val jsonObject = JSONObject(jsonURLString)
     val url = jsonObject.getString("pc")
     return url
+}
+
+/**
+ * Mapを開くためのMethod
+ *　
+ * @context context
+ * @lat 緯度
+ * @lng 経度
+ * 　
+ * @return return 編集した営業時間
+ */
+fun MapOpen(context: Context, lat: Double, lng: Double) {
+
+    val geoStrUri = "geo:${lat},${lng}"
+    val geoUri = Uri.parse(geoStrUri)
+    val intent = Intent(Intent.ACTION_VIEW, geoUri)
+    intent.setPackage("com.google.android.apps.maps")
+    //GoogleMapのアプリがある時
+    if (intent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(intent)
+    } else {
+        //無いときはブラウザのGoogleMapで
+        val browserStrUri = "https://www.google.com/maps/search/?api=1&query=${lat},${lng}"
+        val browserUri = Uri.parse(browserStrUri)
+        val browserIntent = Intent(Intent.ACTION_VIEW, browserUri)
+        context.startActivity(browserIntent)
+    }
+
 }
 
 @Composable
@@ -200,14 +230,23 @@ fun DetealsScreen(navController: NavController, data: SearchResultsData) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(onClick = {
+                Row {
 
-                    val uri = Uri.parse(formatURL(data.url))
-                    val intent = Intent(Intent.ACTION_VIEW, uri)
-                    context.startActivity(intent)
-                }, modifier = Modifier.padding(16.dp)) {
+                    Button(onClick = {
+                        val uri = Uri.parse(formatURL(data.url))
+                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                        context.startActivity(intent)
+                    }, modifier = Modifier.padding(16.dp)) {
 
-                    Text(text = "お店のHPを見る")
+                        Text(text = "お店のHPを見る")
+                    }
+
+                    Button(onClick = {
+                        MapOpen(context, data.lat, data.lng)
+                    }, modifier = Modifier.padding(16.dp)) {
+
+                        Text(text = "Mapで位置を見る")
+                    }
                 }
 
 
@@ -217,7 +256,7 @@ fun DetealsScreen(navController: NavController, data: SearchResultsData) {
 
     }
 
-    Log.d("Deteal", "launchサービス：${formatURL(data.url)}")
+    Log.d("Deteal", "launchサービス：${data.lng}")
 }
 
 @Preview
