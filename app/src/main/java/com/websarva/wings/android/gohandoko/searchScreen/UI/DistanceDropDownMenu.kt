@@ -104,8 +104,10 @@ fun DistanceDropDownMenu(
         }
     })
 
-    Spacer(modifier = Modifier.height(10.dp))
+    Spacer(modifier = Modifier.height(15.dp))
 
     //説明文を表示
     Text(text = selectedDistance.second)
+
+    Spacer(modifier = Modifier.height(10.dp))
 }

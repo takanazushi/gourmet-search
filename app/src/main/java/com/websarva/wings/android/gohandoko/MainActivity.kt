@@ -106,8 +106,16 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
                     NavHost(navController = navHostController, startDestination = "search_screen") {
                         composable("search_screen") {
                             if (isProgressShowing.value) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    CircularProgressIndicator()
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .pointerInput(Unit) {},
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        CircularProgressIndicator()
+                                        Text(text = "お店の情報取得中……")
+                                    }
                                 }
                             } else {
                                 SearchScreen(
