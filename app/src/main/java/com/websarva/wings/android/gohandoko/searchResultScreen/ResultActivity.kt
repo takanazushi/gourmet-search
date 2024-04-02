@@ -2,9 +2,11 @@ package com.websarva.wings.android.gohandoko.searchResultScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -65,47 +67,60 @@ fun ResultActivity(
             Pager(currentPage = nowPage, maxPage = maxPage)
         }
 
-        LazyColumn {
-            this.items(chukedData[nowPage.value]) { data ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .clickable {
-                            selectedData.value = data
-                            navController.navigate("detail_screen")
-                        },
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-                ) {
-                    Row(
+        if(searchResultDataArray.isNotEmpty()){
+
+            LazyColumn {
+                this.items(chukedData[nowPage.value]) { data ->
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
-                    )
-                    {
-                        Image(
-                            painter = rememberImagePainter(data = data.thumbnail),
-                            contentDescription = null,
+                            .clickable {
+                                selectedData.value = data
+                                navController.navigate("detail_screen")
+                            },
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    ) {
+                        Row(
                             modifier = Modifier
-                                .size(100.dp)
-                                .clip(shape = RoundedCornerShape(4.dp)),
-                            contentScale = ContentScale.Crop
+                                .fillMaxWidth()
+                                .padding(8.dp)
                         )
-                        Column(
-                            modifier = Modifier
-                                .padding(start = 8.dp)
-                                .align(Alignment.CenterVertically)
-                        ) {
-                            Text(text = data.name, fontWeight = FontWeight.Bold)
-                            Text(text = data.access)
-                            Text(text = data.genre)
+                        {
+                            Image(
+                                painter = rememberImagePainter(data = data.thumbnail),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .clip(shape = RoundedCornerShape(4.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 8.dp)
+                                    .align(Alignment.CenterVertically)
+                            ) {
+                                Text(text = data.name, fontWeight = FontWeight.Bold)
+                                Text(text = data.access)
+                                Text(text = data.genre)
+                            }
                         }
                     }
                 }
+
+
             }
+        }else if(searchResultDataArray.isEmpty()){
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                Column{
+                    Text(text = "お探しの条件では見つかりませんでした。")
+                    Text(text = "検索条件を変更して再検索してください。")
+                }
 
-
+            }
         }
+
+
     }
 
 
@@ -149,28 +164,7 @@ fun Pager(currentPage: MutableState<Int>, maxPage: Int) {
 @Composable
 fun PreviewResultActivity() {
     val navController = rememberNavController()
-    val searchResultDataArray = arrayListOf<SearchResultsData>().apply {
-        for (i in 1..100) {
-            add(
-                SearchResultsData(
-                    "name$i",
-                    "access$i",
-                    "genre$i",
-                    1234.43,
-                    12.34,
-                    "kuch$i",
-                    "midnight$i",
-                    "aa",
-                    "aa",
-                    "aa",
-                    "aa",
-                    "aa",
-                    "aa",
-                    "aa"
-                )
-            )
-        }
-    }
+    val searchResultDataArray = ArrayList<SearchResultsData>()
     val selectedData = mutableStateOf<SearchResultsData?>(null)
 
     ResultActivity(navController, searchResultDataArray, selectedData)
