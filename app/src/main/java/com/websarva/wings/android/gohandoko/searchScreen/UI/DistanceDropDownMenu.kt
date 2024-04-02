@@ -16,12 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.livedata.observeAsState
 
 @Composable
 fun DistanceDropDownMenu(
@@ -35,8 +32,8 @@ fun DistanceDropDownMenu(
     //Secondがかかる時間
     //ThirdがAPIに渡すときの値
     val distances = listOf(
-        Triple("300m", "歩いて約5分圏内のお店を検索します", 1),
-        Triple("500m", "歩いて約10分圏内のお店を検索します", 2),
+        Triple("300m", "歩いて約5分程度のお店を検索します", 1),
+        Triple("500m", "歩いて約10分程度のお店を検索します", 2),
         Triple("1km", "歩いて約15分程度のお店を検索します", 3),
         Triple("2km", "歩いて約30分程度のお店を検索します", 4),
         Triple("3km", "歩いて約45分程度のお店を検索します", 5),
@@ -55,7 +52,7 @@ fun DistanceDropDownMenu(
     @OptIn(ExperimentalMaterialApi::class)
     (ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { viewModel.expanded.value=!viewModel.expanded.value }
+        onExpandedChange = { viewModel.expanded.value = !viewModel.expanded.value }
     ) {
 
         //テキストフィールドを利用して、ドロップダウンメニューの開閉を制御する
@@ -74,7 +71,7 @@ fun DistanceDropDownMenu(
                 .fillMaxWidth()
 
                 //クリックでドロップダウンメニュー開閉をする
-                .clickable { viewModel.expanded.value=!viewModel.expanded.value }
+                .clickable { viewModel.expanded.value = !viewModel.expanded.value }
         )
 
         //ドロップダウンメニューの中にあるアイテム
@@ -104,8 +101,10 @@ fun DistanceDropDownMenu(
         }
     })
 
-    Spacer(modifier = Modifier.height(10.dp))
+    Spacer(modifier = Modifier.height(15.dp))
 
     //説明文を表示
     Text(text = selectedDistance.second)
+
+    Spacer(modifier = Modifier.height(10.dp))
 }

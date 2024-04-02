@@ -17,8 +17,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,26 +60,29 @@ fun SearchScreen(
             //垂直方法のスクロールを可能にする
             .verticalScroll(rememberScrollState())
     ) {
-        Text(
+
+        //あったらスクロールしないと検索ボタンが出てこない
+        //検索ボタンあれば検索画面とわかるのかどうか……
+        /*Text(
             text = "検索画面",
             //横方向で中央に揃える
             modifier = Modifier.align(Alignment.CenterHorizontally),
             //文字のスタイルの変更
-            style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            style = TextStyle(fontSize = 25.sp, fontWeight = FontWeight.Bold)
         )
 
         //縦方向にスペース
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         //線を入れる
         Divider()
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))*/
 
         //左揃えの文字
-        Text(text = "キーワード入力", modifier = Modifier.align(Alignment.Start))
+        Text(text = "キーワード入力", modifier = Modifier.align(Alignment.Start), fontSize = 20.sp)
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         //これが無いと動かない
         //まだ実験的な機能らしい
@@ -107,22 +108,20 @@ fun SearchScreen(
 
         Divider()
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = "現在地からの距離", modifier = Modifier.align(Alignment.Start))
+        Text(text = "現在地からの距離", modifier = Modifier.align(Alignment.Start), fontSize = 20.sp)
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         //距離を選択するドロップダウンメニュー
         DistanceDropDownMenu(onRangeChange = onRangeChange, viewModel = viewModel)
 
-        Spacer(modifier = Modifier.height(8.dp))
-
         Divider()
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = "お店のジャンル", modifier = Modifier.align(Alignment.Start))
+        Text(text = "お店のジャンル", modifier = Modifier.align(Alignment.Start), fontSize = 20.sp)
 
         GenreCheckbox(searchData = searchData, viewModel = viewModel)
 
