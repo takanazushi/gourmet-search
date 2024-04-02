@@ -3,16 +3,22 @@ package com.websarva.wings.android.gohandoko.getLocationInfo
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.startActivity
 
 
 class LocationInfomation(
@@ -29,12 +35,13 @@ class LocationInfomation(
     /** 経度 **/
     var longitude: Double? = null
 
+
     /**
      * 位置情報の許可を求める
      * 許可：getLocationの呼び出し
      * 拒否：トーストメッセージの表示
      */
-    private val requestPermissionLauncher =
+     val requestPermissionLauncher =
         activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 getLocation()
@@ -50,6 +57,15 @@ class LocationInfomation(
      * 位置情報の取得
      */
     fun getLocation() {
+
+        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            updateLocation()
+        }
+        else{
+            val settgIntent=Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            activity.startActivity(settgIntent)
+        }
+
         if (ContextCompat.checkSelfPermission(
                 activity,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -59,6 +75,8 @@ class LocationInfomation(
         } else {
             updateLocation()
         }
+
+
 
     }
 
@@ -109,6 +127,7 @@ class LocationInfomation(
 
                 }, 10000)
             }
+
         }
     }
 }

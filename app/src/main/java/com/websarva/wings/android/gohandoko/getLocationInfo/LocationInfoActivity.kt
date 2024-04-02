@@ -1,5 +1,7 @@
 package com.websarva.wings.android.gohandoko.getLocationInfo
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
@@ -9,6 +11,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 
 class LocationInfoActivity : ComponentActivity(), LocationListener {
     private lateinit var locationInfomation: LocationInfomation
@@ -16,7 +20,15 @@ class LocationInfoActivity : ComponentActivity(), LocationListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         locationInfomation = LocationInfomation(this, this)
-        locationInfomation.getLocation()
+
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            locationInfomation.requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        else{
+            locationInfomation.getLocation()
+        }
+
+
     }
 
     override fun onLocationChanged(location: Location) {

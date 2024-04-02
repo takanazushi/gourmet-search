@@ -1,14 +1,23 @@
 package com.websarva.wings.android.gohandoko
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -43,48 +52,87 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
 
     private var searchResultsDataArray: ArrayList<SearchResultsData> = ArrayList()
 
-    val selectedData= mutableStateOf<SearchResultsData?>(null)
+    val selectedData = mutableStateOf<SearchResultsData?>(null)
+
+    //位置情報取得中かどうかflag
+    private val isGettingLocation= mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //位置情報の取得を開始
         locationInfomation = LocationInfomation(this, this)
-        locationInfomation.getLocation()
-
-
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            locationInfomation.requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            locationInfomation.getLocation()
+        }
 
         setContent {
             GoHandokoTheme {
 
-                //NavControllerのインスタンス作成
-                navHostController = rememberNavController()
+                //位置情報がまだ取得できてなかったら
+                if(locationInfomation.latitude==null)
+                {
+                    //flagをTrueにする
+                    isGettingLocation.value=true
+                }
 
-                //NavHostを設定
-                NavHost(navController = navHostController, startDestination = "search_screen") {
-                    composable("search_screen") {
-                        if (isProgressShowing.value) {
+                //位置情報が取得できていなかったら
+                if (isGettingLocation.value) {
+                    //位置情報を取得中であることを表示する
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .pointerInput(Unit) {},
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator()
-                        } else {
-                            SearchScreen(
-                                onSearchClick = ::search,
-                                onLunchCheckedChange = { serchData.lunchService = it },
-                                onMidnightCheckedChange = { serchData.openAfterMidnight = it },
-                                searchData = serchData,
-                                onRangeChange = { serchData.range = it },
-                                onKeyWordChange = { serchData.keyWord = it.replace("　", " ") }
-                            )
+                            Text(text = "位置情報取得中……")
                         }
                     }
+                } else {
+                    //位置情報を取得できたら、処理開始
 
-                    //検索結果のルートを設定
-                    composable("result_screen") {
-                        ResultActivity(navHostController,searchResultsDataArray,selectedData)
-                    }
+                    //NavControllerのインスタンス作成
+                    navHostController = rememberNavController()
 
-                    composable("detail_screen"){
-                        if(selectedData.value!=null){
-                            DetealsScreen(navController = navHostController, data = selectedData.value!!)
+                    //NavHostを設定
+                    NavHost(navController = navHostController, startDestination = "search_screen") {
+                        composable("search_screen") {
+                            if (isProgressShowing.value) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    CircularProgressIndicator()
+                                }
+                            } else {
+                                SearchScreen(
+                                    onSearchClick = ::search,
+                                    onLunchCheckedChange = { serchData.lunchService = it },
+                                    onMidnightCheckedChange = { serchData.openAfterMidnight = it },
+                                    searchData = serchData,
+                                    onRangeChange = { serchData.range = it },
+                                    onKeyWordChange = { serchData.keyWord = it.replace("　", " ") }
+                                )
+                            }
+                        }
+
+                        //検索結果のルートを設定
+                        composable("result_screen") {
+                            ResultActivity(navHostController, searchResultsDataArray, selectedData)
+                        }
+
+                        composable("detail_screen") {
+                            if (selectedData.value != null) {
+                                DetealsScreen(
+                                    navController = navHostController,
+                                    data = selectedData.value!!
+                                )
+                            }
                         }
                     }
                 }
@@ -128,12 +176,15 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
 
     override fun onLocationChanged(location: Location) {
 
+        if(locationInfomation.latitude!=null){
+            isGettingLocation.value=false
+        }
     }
 
     /**結果を受け取った時の処理**/
     override fun shopInfoAsyncCallBack(searchResultsDataArrayList: ArrayList<SearchResultsData>) {
 
-        searchResultsDataArray=searchResultsDataArrayList
+        searchResultsDataArray = searchResultsDataArrayList
 
         for (gourmet in searchResultsDataArrayList) {
             Log.d(
