@@ -2,6 +2,7 @@ package com.websarva.wings.android.gohandoko.searchResultScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,11 +35,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchResultsData
+import kotlin.math.min
 
 @Composable
 fun ResultActivity(
@@ -59,15 +62,27 @@ fun ResultActivity(
 
     Column {
 
-        Row {
+        Row{
             Button(onClick = { navController.popBackStack() }, modifier = Modifier.padding(16.dp)) {
                 Text(text = "戻る")
             }
             Spacer(modifier = Modifier.width(10.dp))
-            Pager(currentPage = nowPage, maxPage = maxPage)
+
+
+            if(searchResultDataArray.isNotEmpty()){
+
+                Pager(currentPage = nowPage, maxPage = maxPage)
+
+                Text(text = "${nowPage.value*20+1}件～${min((nowPage.value+1)*20,searchResultDataArray.size)}件", modifier = Modifier.padding(top = 30.dp, start = 15.dp,end=20.dp))
+            }
+
+
+
         }
 
         if(searchResultDataArray.isNotEmpty()){
+
+
 
             LazyColumn {
                 this.items(chukedData[nowPage.value]) { data ->
