@@ -84,7 +84,8 @@ class ShopInfoAsyncTask(private val listener: ConfirmAsyncListener) {
                     photo = json.getJSONObject("photo").getJSONObject("pc").getString("l"),
                     genre=json.getJSONObject("genre").getString("name"),
                     open = json.getString("open"),
-                    close = json.getString("close")
+                    close = json.getString("close"),
+                    budget=json.getJSONObject("budget").getString("average")
                     )
                 searchResultsDataArray.add(searchResultsData)
             }

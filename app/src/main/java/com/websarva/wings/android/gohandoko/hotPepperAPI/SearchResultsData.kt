@@ -29,5 +29,6 @@ data class SearchResultsData(
     var photo:String,
     var genre:String,
     var open:String,
-    var close:String
+    var close:String,
+    var budget:String
 )

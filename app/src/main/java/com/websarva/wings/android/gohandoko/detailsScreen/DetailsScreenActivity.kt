@@ -17,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -102,10 +103,22 @@ fun DetealsScreen(navController: NavController, data: SearchResultsData) {
         val context = LocalContext.current
 
         Column {
-            Button(onClick = { navController.popBackStack() }, modifier = Modifier.padding(16.dp)) {
+            Row(modifier = Modifier.padding(16.dp)) {
+                Button(onClick = { navController.popBackStack() }) {
 
-                Text(text = "戻る")
+                    Text(text = "戻る")
+                }
+
+                Button(onClick = {
+                    MapOpen(context, data.lat, data.lng)
+                }, modifier = Modifier.padding(start = 209.dp)) {
+
+                    Text(text = "Map")
+                }
+
+
             }
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -230,23 +243,33 @@ fun DetealsScreen(navController: NavController, data: SearchResultsData) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Row {
+                Text(
+                    text = "予算",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
 
-                    Button(onClick = {
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = data.budget,
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+
+                Spacer(modifier = Modifier.height(25.dp))
+
+                Button(
+                    onClick = {
                         val uri = Uri.parse(formatURL(data.url))
                         val intent = Intent(Intent.ACTION_VIEW, uri)
                         context.startActivity(intent)
-                    }, modifier = Modifier.padding(16.dp)) {
+                    },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
 
-                        Text(text = "お店のHPを見る")
-                    }
-
-                    Button(onClick = {
-                        MapOpen(context, data.lat, data.lng)
-                    }, modifier = Modifier.padding(16.dp)) {
-
-                        Text(text = "Mapで位置を見る")
-                    }
+                    Text(text = "お店のHPを見る")
                 }
 
 
@@ -256,7 +279,7 @@ fun DetealsScreen(navController: NavController, data: SearchResultsData) {
 
     }
 
-    Log.d("Deteal", "launchサービス：${data.lng}")
+    Log.d("Deteal", "launchサービス：${data.budget}")
 }
 
 @Preview
@@ -276,7 +299,8 @@ fun Preview() {
         photo = "https://imgfp.hotp.jp/IMGH/97/41/P037659741/P037659741_238.jpg",
         genre = "居酒屋",
         open = "月～水、金、祝前日: 11:30～14:30 （料理L.O. 14:00 ドリンクL.O. 14:00）17:30～23:00 （料理L.O. 22:00 ドリンクL.O. 22:00）土: 11:30～14:30 （料理L.O. 14:00 ドリンクL.O. 14:00）17:00～23:00 （料理L.O. 22:00 ドリンクL.O. 22:00）",
-        close = "火・木"
+        close = "火・木",
+        budget = "hogehoge"
     )
 
     val navController = rememberNavController()
