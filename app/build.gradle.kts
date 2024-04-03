@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId = "com.websarva.wings.android.gohandoko"
         minSdk = 27
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
