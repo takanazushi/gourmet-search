@@ -28,7 +28,7 @@ fun LunchAndMidnightCheckBox(
                 onLunchCheckedChange(isLaunchChecked)
             }
         )
-        Spacer(modifier = Modifier.width(60.dp))
+        Spacer(modifier = Modifier.width(10.dp))
 
         //23時以降も営業してるところがいいかどうかのチェックボックス
         CheckBoxAndTitleText(

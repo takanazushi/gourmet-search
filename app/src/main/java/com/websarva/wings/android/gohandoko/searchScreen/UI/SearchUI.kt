@@ -17,6 +17,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,7 +65,7 @@ fun SearchScreen(
 
         //あったらスクロールしないと検索ボタンが出てこない
         //検索ボタンあれば検索画面とわかるのかどうか……
-        /*Text(
+        Text(
             text = "検索画面",
             //横方向で中央に揃える
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -77,7 +79,7 @@ fun SearchScreen(
         //線を入れる
         Divider()
 
-        Spacer(modifier = Modifier.height(10.dp))*/
+        Spacer(modifier = Modifier.height(10.dp))
 
         //左揃えの文字
         Text(text = "キーワード入力", modifier = Modifier.align(Alignment.Start), fontSize = 20.sp)
@@ -122,6 +124,8 @@ fun SearchScreen(
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(text = "お店のジャンル", modifier = Modifier.align(Alignment.Start), fontSize = 20.sp)
+
+        Spacer(modifier = Modifier.height(20.dp))
 
         GenreCheckbox(searchData = searchData, viewModel = viewModel)
 
