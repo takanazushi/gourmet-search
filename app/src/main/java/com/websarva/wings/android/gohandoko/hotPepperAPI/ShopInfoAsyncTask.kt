@@ -16,6 +16,8 @@ class ShopInfoAsyncTask(private val listener: ConfirmAsyncListener) {
     private val buffer = StringBuffer()
     private val TAG = "ShopInfoAsyncTask"
 
+    private var totalCount: Int = 0
+
     fun execute(url: URL) {
         listener.showProgress()
 
@@ -65,6 +67,7 @@ class ShopInfoAsyncTask(private val listener: ConfirmAsyncListener) {
 
         try {
             val jsonObject = JSONObject(result)
+            totalCount = jsonObject.getJSONObject("results").getInt("results_available")
             val jsonArray = jsonObject.getJSONObject("results").getJSONArray("shop")
             val searchResultsDataArray = ArrayList<SearchResultsData>()
 
@@ -89,7 +92,7 @@ class ShopInfoAsyncTask(private val listener: ConfirmAsyncListener) {
                 searchResultsDataArray.add(searchResultsData)
             }
 
-            listener.shopInfoAsyncCallBack(searchResultsDataArray)
+            listener.shopInfoAsyncCallBack(searchResultsDataArray,totalCount)
         }catch (e:JSONException){
             e.printStackTrace()
             Log.d(TAG,e.toString())
@@ -99,7 +102,7 @@ class ShopInfoAsyncTask(private val listener: ConfirmAsyncListener) {
     }
 
     interface ConfirmAsyncListener{
-        fun shopInfoAsyncCallBack(searchResultsDataArray:ArrayList<SearchResultsData>)
+        fun shopInfoAsyncCallBack(searchResultsDataArray:ArrayList<SearchResultsData>, totalCount: Int)
         fun showProgress()
         fun hideProgress()
     }

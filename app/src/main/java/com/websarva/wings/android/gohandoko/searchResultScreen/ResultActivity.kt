@@ -1,5 +1,6 @@
 package com.websarva.wings.android.gohandoko.searchResultScreen
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,23 +40,37 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
+import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchConditionsData
 import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchResultsData
+import com.websarva.wings.android.gohandoko.hotPepperAPI.ShopInfoAsyncTask
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ResultActivity(
     navController: NavController,
     searchResultDataArray: ArrayList<SearchResultsData>,
-    selectedData: MutableState<SearchResultsData?>
+    selectedData: MutableState<SearchResultsData?>,
+    totalCount: Int,
+    context: Context,
+    searchConditionsData: SearchConditionsData,
+    listener: ShopInfoAsyncTask.ConfirmAsyncListener
+
 ) {
 
     //受け取ったデータを２０個ずつに分割する
     val chukedData = searchResultDataArray.chunked(20)
 
     //最大のページ数
-    val maxPage = chukedData.size
+    val maxPage = (totalCount + 19) / 20 // Maxpageを設定する
 
     //現在のページ数
     var nowPage = remember { mutableStateOf(0) }
+
+    // APIを再度呼び出すフラグ
+    var callApiAgain = remember { mutableStateOf(false) }
 
 
     Column {
@@ -167,7 +183,7 @@ fun PreviewResultActivity() {
     val searchResultDataArray = ArrayList<SearchResultsData>()
     val selectedData = mutableStateOf<SearchResultsData?>(null)
 
-    ResultActivity(navController, searchResultDataArray, selectedData)
+
 }
 
 

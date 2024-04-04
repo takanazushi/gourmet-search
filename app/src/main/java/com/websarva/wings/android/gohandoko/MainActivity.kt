@@ -54,6 +54,11 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
 
     val selectedData = mutableStateOf<SearchResultsData?>(null)
 
+    private var shopCount: Int = 0
+
+    lateinit var searchConditionsData: SearchConditionsData
+
+
     //位置情報取得中かどうかflag
     private val isGettingLocation= mutableStateOf(false)
 
@@ -131,7 +136,7 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
 
                         //検索結果のルートを設定
                         composable("result_screen") {
-                            ResultActivity(navHostController, searchResultsDataArray, selectedData)
+                            ResultActivity(navHostController,searchResultsDataArray, selectedData,shopCount,this@MainActivity,searchConditionsData,this@MainActivity)
                         }
 
                         composable("detail_screen") {
@@ -154,7 +159,7 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
     private fun search() {
         Log.d("MainActivity", "検索はじまり")
         CoroutineScope(Dispatchers.Main).launch {
-            val searchConditionsData = SearchConditionsData(
+            searchConditionsData = SearchConditionsData(
                 lat = locationInfomation.latitude ?: 0.0,
                 lng = locationInfomation.longitude ?: 0.0,
                 lunch = if (serchData.lunchService) 1 else 0,
@@ -190,9 +195,10 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
     }
 
     /**結果を受け取った時の処理**/
-    override fun shopInfoAsyncCallBack(searchResultsDataArrayList: ArrayList<SearchResultsData>) {
+    override fun shopInfoAsyncCallBack(searchResultsDataArrayList: ArrayList<SearchResultsData>,totalCount: Int) {
 
         searchResultsDataArray = searchResultsDataArrayList
+        shopCount=totalCount
 
         for (gourmet in searchResultsDataArrayList) {
             Log.d(
@@ -202,6 +208,7 @@ class MainActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener
         }
 
         Log.d("api", "緯度：${locationInfomation.latitude},経度:${locationInfomation.longitude}")
+        Log.d("api", "見せの数：${shopCount}")
 
         //結果画面に遷移
         navHostController.navigate("result_screen")

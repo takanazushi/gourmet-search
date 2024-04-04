@@ -1,4 +1,4 @@
-package com.websarva.wings.android.gohandoko.searchScreen
+package com.websarva.wings.android.gohandoko
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -29,13 +29,14 @@ import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchConditionsData
 import com.websarva.wings.android.gohandoko.hotPepperAPI.SearchResultsData
 import com.websarva.wings.android.gohandoko.hotPepperAPI.ShopInfoAsyncTask
 import com.websarva.wings.android.gohandoko.searchResultScreen.ResultActivity
+import com.websarva.wings.android.gohandoko.searchScreen.SearchData
+import com.websarva.wings.android.gohandoko.searchScreen.SearchScreen
 import com.websarva.wings.android.gohandoko.ui.theme.GoHandokoTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener,
-    LocationListener {
+class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListener, LocationListener {
 
     //画面遷移を管理するNavHostController
     private lateinit var navHostController: NavHostController
@@ -52,6 +53,8 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
     private var searchResultsDataArray: ArrayList<SearchResultsData> = ArrayList()
 
     val selectedData = mutableStateOf<SearchResultsData?>(null)
+
+    private var shopCount: Int = 0
 
     //位置情報取得中かどうかflag
     private val isGettingLocation= mutableStateOf(false)
@@ -130,7 +133,7 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
 
                         //検索結果のルートを設定
                         composable("result_screen") {
-                            ResultActivity(navHostController, searchResultsDataArray, selectedData)
+                            ResultActivity(navHostController, searchResultsDataArray, selectedData,shopCount)
                         }
 
                         composable("detail_screen") {
@@ -189,9 +192,10 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
     }
 
     /**結果を受け取った時の処理**/
-    override fun shopInfoAsyncCallBack(searchResultsDataArrayList: ArrayList<SearchResultsData>) {
+    override fun shopInfoAsyncCallBack(searchResultsDataArrayList: ArrayList<SearchResultsData>,totalCount: Int) {
 
         searchResultsDataArray = searchResultsDataArrayList
+        shopCount=totalCount
 
         for (gourmet in searchResultsDataArrayList) {
             Log.d(
@@ -201,6 +205,7 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
         }
 
         Log.d("api", "緯度：${locationInfomation.latitude},経度:${locationInfomation.longitude}")
+        Log.d("api", "見せの数：${shopCount}")
 
         //結果画面に遷移
         navHostController.navigate("result_screen")
@@ -216,5 +221,3 @@ class SearchActivity : ComponentActivity(), ShopInfoAsyncTask.ConfirmAsyncListen
         isProgressShowing.value = false
     }
 }
-
-
